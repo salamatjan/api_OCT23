@@ -1,0 +1,171 @@
+{
+	"info": {
+		"_postman_id": "a938443b-9c28-4de4-ad60-69aa3ab6dc3b",
+		"name": "jenkins_demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27211178",
+		"_collection_link": "https://www.postman.com/galactic-capsule-243304/workspace/oct23/collection/27211178-a938443b-9c28-4de4-ad60-69aa3ab6dc3b?action=share&source=collection_link&creator=27211178"
+	},
+	"item": [
+		{
+			"name": "sign-in - [T]",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 995ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(995);",
+							"});",
+							"",
+							"pm.test(\"Verify user role = TEACHER\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"TEACHER\");",
+							"});",
+							"",
+							"pm.test(\"Verify name = Nazik Naz\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Nazik Naz\");",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"tokenTeacher\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"naziknaz312@gmail.com\",\n  \"password\": \"test1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/sign-in",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"sign-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "quiz - [T] new quiz Salamat",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 600ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(600);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"quizID\", jsonData.id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenTeacher}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Salamat API demo\",\n  \"totalScore\": 18,\n  \"passingPercentage\": 75,\n  \"showStopperQuestion\": 1,\n  \"questions\": [\n    {\n      \"type\": \"TEXTUAL\",\n      \"question\": \"What is your name?\",\n      \"score\": 5\n    },\n    {\n      \"type\": \"SINGLE_CHOICE\",\n      \"question\": \"Which city is city largest in California?\",\n      \"score\": 7,\n      \"answer\": 2,\n      \"hasOtherOption\": false,\n      \"options\": [\n        \"San Francisco\",\n        \"Sacramento\",\n        \"Los Angeles\",\n        \"Redding\"\n      ]\n    },\n    {\n      \"type\": \"MULTIPLE_CHOICE\",\n      \"question\": \"Who was apple founded by?\",\n      \"score\": 6,\n      \"answers\": [\n        0,\n        1,\n        2\n      ],\n      \"hasOtherOption\": true,\n      \"options\": [\n        \"Steve Jobs\",\n        \"Steve Wozniak\",\n        \"Ronald Wayne\",\n        \"Ronald Reagan\"\n      ]\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/quiz",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"quiz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete quiz - [T]",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 300ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(300);",
+							"});",
+							"",
+							"pm.test(\"Verify body message\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"Quiz was deleted\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenTeacher}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/quiz/{{quizID}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"quiz",
+						"{{quizID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
